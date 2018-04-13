@@ -17,6 +17,7 @@ package com.example.android.inventory;
 
 import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -32,9 +33,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.inventory.data.InventoryContract;
 import com.example.android.inventory.data.InventoryContract.ProductEntry;
 
 /**
@@ -186,7 +190,7 @@ public class EditorActivity extends AppCompatActivity implements
         }
         values.put(ProductEntry.COLUMN_PRICE, price);
 
-        // If the price is not provided by the user, don't try to parse the string into an
+        // If the quantity is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)) {
@@ -210,7 +214,7 @@ public class EditorActivity extends AppCompatActivity implements
                     Toast.makeText(this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
                 }
             } catch (IllegalArgumentException e) {
-                Toast.makeText(this, e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
             // Otherwise this is an EXISTING product, so update the product with content URI: mCurrentProductUri
@@ -347,7 +351,7 @@ public class EditorActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
 
         // Proceed with moving to the first row of the cursor and reading data from it
         // (This should be the only row in the cursor)
@@ -366,7 +370,7 @@ public class EditorActivity extends AppCompatActivity implements
             String suppName = cursor.getString(suppNameColumnIndex);
             String suppPhone = cursor.getString(suppPhoneColumnIndex);
             int price = cursor.getInt(priceColumnIndex);
-            int quantity = cursor.getInt(quantityColumnIndex);
+            final int quantity = cursor.getInt(quantityColumnIndex);
 
             // Update the views on the screen with the values from the database
             mNameEditText.setText(name);
@@ -375,6 +379,48 @@ public class EditorActivity extends AppCompatActivity implements
             mSuppPhoneEditText.setText(suppPhone);
             mPriceEditText.setText(Integer.toString(price));
             mQuantityEditText.setText(Integer.toString(quantity));
+
+            // Setup '-' button to reduce quantity
+            Button deductionButton = (Button) findViewById(R.id.deduct_1);
+            deductionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (quantity == 0) {
+                        // Show an error message as a toast
+                        Toast.makeText(EditorActivity.this, R.string.book_negative, Toast.LENGTH_SHORT).show();
+                        // Exit this method ends early as there is nothing more to do
+                        return;
+                    }
+                    mQuantityEditText.setText(Integer.toString(quantity - 1));
+                    int idColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry._ID);
+                    Long id = cursor.getLong(idColumnIndex);
+                    Uri currentProductUri = ContentUris.withAppendedId(InventoryContract.ProductEntry.CONTENT_URI, id);
+
+                    // Create a ContentValues object where column names are the keys,
+                    // and product attributes from the editor are the values.
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryContract.ProductEntry.COLUMN_QUANTITY, quantity - 1);
+                    getContentResolver().update(currentProductUri, values, null, null);
+                }
+            });
+
+            // Setup '+' button to increase quantity
+            Button addButton = (Button) findViewById(R.id.add_1);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mQuantityEditText.setText(Integer.toString(quantity + 1));
+                    int idColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry._ID);
+                    Long id = cursor.getLong(idColumnIndex);
+                    Uri currentProductUri = ContentUris.withAppendedId(InventoryContract.ProductEntry.CONTENT_URI, id);
+
+                    // Create a ContentValues object where column names are the keys,
+                    // and product attributes from the editor are the values.
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryContract.ProductEntry.COLUMN_QUANTITY, quantity + 1);
+                    getContentResolver().update(currentProductUri, values, null, null);
+                }
+            });
         }
     }
 

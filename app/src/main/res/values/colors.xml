@@ -14,4 +14,7 @@
 
     <!-- Primary dark color for the editor -->
     <color name="editorColorPrimaryDark">#0D47A1</color>
+
+    <!-- Buttons color -->
+    <color name="buttonColor">#EEEEEE</color>
 </resources>

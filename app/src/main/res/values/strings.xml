@@ -37,7 +37,7 @@
     <string name="category_quantity">Quantity</string>
 
     <!-- Text hint for product name field in the editor -->
-    <string name="hint_name">Title</string>
+    <string name="hint_name">Title (mandatory field)</string>
 
     <!-- Text hint for product author field in the editor -->
     <string name="hint_author">Author</string>
@@ -54,11 +54,11 @@
     <!-- Units for price of the product (USD) -->
     <string name="unit_price">USD</string>
 
-    <!-- Price with unit (placeholder for a price) -->
+    <!-- Quantity with unit (placeholder for a price) -->
     <string name="price_with_unit">%s USD</string>
 
     <!-- Text hint for quantity field in the editor -->
-    <string name="hint_quantity">Qunatity</string>
+    <string name="hint_quantity">Quantity</string>
 
     <!-- Toast message in editor when new product has been successfully inserted -->
     <string name="editor_insert_product_successful">Book saved</string>
@@ -98,4 +98,17 @@
 
     <!-- Label for the product's price if the price is unknown -->
     <string name="unknown_price">Unknown price</string>
+
+    <!-- Label for the SALE button-->
+    <string name="sale_button">Sale</string>
+
+    <!-- Message shown when the book chosen is not available -->
+    <string name="book_unavailable">Sorry, this book is not available at this moment.</string>
+
+    <!-- Message shown when the book chosen is not available -->
+    <string name="book_negative">You can not have negative number of books.</string>
+
+    <!-- Sighn for add and deduct buttons -->
+    <string name="add_1">+</string>
+    <string name="deduct_1">-</string>
 </resources>

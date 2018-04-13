@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.inventory.data.InventoryContract.ProductEntry;
 
@@ -147,7 +149,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 ProductEntry._ID,
                 ProductEntry.COLUMN_NAME,
                 ProductEntry.COLUMN_AUTHOR,
-                ProductEntry.COLUMN_PRICE};
+                ProductEntry.COLUMN_PRICE,
+                ProductEntry.COLUMN_QUANTITY};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context

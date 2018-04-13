@@ -104,20 +104,29 @@
             style="@style/CategoryStyle"
             android:text="@string/category_quantity" />
 
-        <!-- Input fields -->
-        <RelativeLayout
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/deduct_1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:paddingLeft="@dimen/padding_small">
+            android:layout_margin="@dimen/activity_margin"
+            android:text="@string/deduct_1" />
 
-            <!-- Price field -->
-            <EditText
-                android:id="@+id/edit_quantity"
-                style="@style/EditorFieldStyle"
-                android:hint="@string/hint_quantity"
-                android:inputType="number" />
+        <!-- Quantity field -->
+        <EditText
+            android:id="@+id/edit_quantity"
+            style="@style/EditorFieldStyle"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:hint="@string/hint_quantity"
+            android:inputType="number" />
 
-        </RelativeLayout>
+        <Button
+            android:id="@+id/add_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_margin"
+            android:text="@string/add_1" />
+
     </LinearLayout>
 </LinearLayout>
