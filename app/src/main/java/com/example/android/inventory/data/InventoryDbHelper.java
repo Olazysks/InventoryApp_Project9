@@ -26,8 +26,6 @@ import com.example.android.inventory.data.InventoryContract.ProductEntry;
  */
 public class InventoryDbHelper extends SQLiteOpenHelper {
 
-    public static final String LOG_TAG = InventoryDbHelper.class.getSimpleName();
-
     /**
      * Name of the database file
      */
@@ -56,6 +54,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_INVENTORY_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME + " ("
                 + ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ProductEntry.COLUMN_NAME + " TEXT NOT NULL, "
+                + ProductEntry.COLUMN_AUTHOR + " TEXT, "
                 + ProductEntry.COLUMN_SUPP_NAME + " TEXT, "
                 + ProductEntry.COLUMN_SUPP_PHONE + " TEXT, "
                 + ProductEntry.COLUMN_PRICE + " INTEGER NOT NULL DEFAULT 0,"

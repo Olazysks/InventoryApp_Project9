@@ -59,6 +59,11 @@ public class EditorActivity extends AppCompatActivity implements
     private EditText mNameEditText;
 
     /**
+     * EditText field to enter the product's author
+     */
+    private EditText mAuthorEditText;
+
+    /**
      * EditText field to enter the supplier's name
      */
     private EditText mSuppNameEditText;
@@ -125,11 +130,21 @@ public class EditorActivity extends AppCompatActivity implements
 
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.edit_name);
+        mAuthorEditText = (EditText) findViewById(R.id.edit_author);
         mSuppNameEditText = (EditText) findViewById(R.id.edit_supplier_name);
         mSuppPhoneEditText = (EditText) findViewById(R.id.edit_supplier_phone);
         mPriceEditText = (EditText) findViewById(R.id.edit_price);
         mQuantityEditText = (EditText) findViewById(R.id.edit_quantity);
 
+        // Setup OnTouchListeners on all the input fields, so we can determine if the user
+        // has touched or modified them. This will let us know if there are unsaved changes
+        // or not, if the user tries to leave the editor without saving.
+        mNameEditText.setOnTouchListener(mTouchListener);
+        mAuthorEditText.setOnTouchListener(mTouchListener);
+        mSuppNameEditText.setOnTouchListener(mTouchListener);
+        mSuppPhoneEditText.setOnTouchListener(mTouchListener);
+        mPriceEditText.setOnTouchListener(mTouchListener);
+        mQuantityEditText.setOnTouchListener(mTouchListener);
     }
 
     /**
@@ -139,6 +154,7 @@ public class EditorActivity extends AppCompatActivity implements
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
+        String authorString = mAuthorEditText.getText().toString().trim();
         String suppNameString = mSuppNameEditText.getText().toString().trim();
         String suppPhoneString = mSuppPhoneEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
@@ -147,7 +163,7 @@ public class EditorActivity extends AppCompatActivity implements
         // Check if this is supposed to be a new product
         // and check if all the fields in the editor are blank
         if (mCurrentProductUri == null &&
-                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(suppNameString) &&
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(authorString) && TextUtils.isEmpty(suppNameString) &&
                 TextUtils.isEmpty(suppPhoneString)) {
             // Since no fields were modified, we can return early without creating a new product.
             // No need to create ContentValues and no need to do any ContentProvider operations.
@@ -158,6 +174,7 @@ public class EditorActivity extends AppCompatActivity implements
         // and product attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_NAME, nameString);
+        values.put(ProductEntry.COLUMN_AUTHOR, authorString);
         values.put(ProductEntry.COLUMN_SUPP_NAME, suppNameString);
         values.put(ProductEntry.COLUMN_SUPP_PHONE, suppPhoneString);
 
@@ -181,15 +198,19 @@ public class EditorActivity extends AppCompatActivity implements
         if (mCurrentProductUri == null) {
             // This is a NEW product, so insert a new product into the provider,
             // returning the content URI for the new product.
-            Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+            try {
+                Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
-            // Show a toast message depending on whether or not the insertion was successful
-            if (newUri == null) {
-                // If the new content URI is null, then there was an error with insertion.
-                Toast.makeText(this, getString(R.string.editor_insert_product_failed), Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the insertion was successful and we can display a toast with the row ID.
-                Toast.makeText(this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
+                // Show a toast message depending on whether or not the insertion was successful
+                if (newUri == null) {
+                    // If the new content URI is null, then there was an error with insertion.
+                    Toast.makeText(this, getString(R.string.editor_insert_product_failed), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Otherwise, the insertion was successful and we can display a toast with the row ID.
+                    Toast.makeText(this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
+                }
+            } catch (IllegalArgumentException e) {
+                Toast.makeText(this, e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         } else {
             // Otherwise this is an EXISTING product, so update the product with content URI: mCurrentProductUri
@@ -205,8 +226,7 @@ public class EditorActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_product_successful),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -311,6 +331,7 @@ public class EditorActivity extends AppCompatActivity implements
         String[] projection = {
                 ProductEntry._ID,
                 ProductEntry.COLUMN_NAME,
+                ProductEntry.COLUMN_AUTHOR,
                 ProductEntry.COLUMN_SUPP_NAME,
                 ProductEntry.COLUMN_SUPP_PHONE,
                 ProductEntry.COLUMN_PRICE,
@@ -333,6 +354,7 @@ public class EditorActivity extends AppCompatActivity implements
         if (cursor.moveToFirst()) {
             // Find the columns of product attributes that we're interested in
             int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_NAME);
+            int authorColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_AUTHOR);
             int suppNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_SUPP_NAME);
             int suppPhoneColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_SUPP_PHONE);
             int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRICE);
@@ -340,15 +362,17 @@ public class EditorActivity extends AppCompatActivity implements
 
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
+            String author = cursor.getString(authorColumnIndex);
             String suppName = cursor.getString(suppNameColumnIndex);
-            int suppPhone = cursor.getInt(suppPhoneColumnIndex);
+            String suppPhone = cursor.getString(suppPhoneColumnIndex);
             int price = cursor.getInt(priceColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
 
             // Update the views on the screen with the values from the database
             mNameEditText.setText(name);
+            mAuthorEditText.setText(author);
             mSuppNameEditText.setText(suppName);
-            mSuppPhoneEditText.setText(Integer.toString(suppPhone));
+            mSuppPhoneEditText.setText(suppPhone);
             mPriceEditText.setText(Integer.toString(price));
             mQuantityEditText.setText(Integer.toString(quantity));
         }
@@ -369,7 +393,7 @@ public class EditorActivity extends AppCompatActivity implements
     private void showUnsavedChangesDialog(
             DialogInterface.OnClickListener discardButtonClickListener) {
         // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        // for the postive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
         builder.setPositiveButton(R.string.discard, discardButtonClickListener);
@@ -393,7 +417,7 @@ public class EditorActivity extends AppCompatActivity implements
      */
     private void showDeleteConfirmationDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        // for the postive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {

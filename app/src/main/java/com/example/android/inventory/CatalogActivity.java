@@ -94,6 +94,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // and Harry Potter's product attributes are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_NAME, "Harry Potter");
+        values.put(ProductEntry.COLUMN_AUTHOR, "J. K. Rowling");
         values.put(ProductEntry.COLUMN_SUPP_NAME, "Magic BookPrint");
         values.put(ProductEntry.COLUMN_SUPP_PHONE, "+48 888 888 888");
         values.put(ProductEntry.COLUMN_PRICE, 20);
@@ -145,6 +146,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         String[] projection = {
                 ProductEntry._ID,
                 ProductEntry.COLUMN_NAME,
+                ProductEntry.COLUMN_AUTHOR,
                 ProductEntry.COLUMN_PRICE};
 
         // This loader will execute the ContentProvider's query method on a background thread

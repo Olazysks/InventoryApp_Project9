@@ -77,6 +77,13 @@ public final class InventoryContract {
         public final static String COLUMN_NAME = "name";
 
         /**
+         * Author of the product.
+         * <p>
+         * Type: TEXT
+         */
+        public final static String COLUMN_AUTHOR = "author";
+
+        /**
          * Supplier's of the product name.
          * <p>
          * Type: TEXT

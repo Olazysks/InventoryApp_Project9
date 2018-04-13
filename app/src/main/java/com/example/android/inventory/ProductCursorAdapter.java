@@ -57,15 +57,18 @@ public class ProductCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
-        TextView summaryTextView = (TextView) view.findViewById(R.id.summary);
+        TextView authorTextView = (TextView) view.findViewById(R.id.author);
+        TextView priceTextView = (TextView) view.findViewById(R.id.price);
 
         // Find the columns of product attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry.COLUMN_NAME);
-        int breedColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry.COLUMN_PRICE);
+        int authorColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry.COLUMN_AUTHOR);
+        int priceColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry.COLUMN_PRICE);
 
         // Read the product attributes from the Cursor for the current product
         String productName = cursor.getString(nameColumnIndex);
-        String price = cursor.getString(breedColumnIndex);
+        String productAuthor = cursor.getString(authorColumnIndex);
+        String price = cursor.getString(priceColumnIndex);
 
         // If the product price is empty string or null, then use some default text
         // that says "Unknown price", so the TextView isn't blank.
@@ -75,6 +78,7 @@ public class ProductCursorAdapter extends CursorAdapter {
 
         // Update the TextViews with the attributes for the current product
         nameTextView.setText(productName);
-        summaryTextView.setText(price);
+        authorTextView.setText(productAuthor);
+        priceTextView.setText(context.getString(R.string.price_with_unit, price));
     }
 }

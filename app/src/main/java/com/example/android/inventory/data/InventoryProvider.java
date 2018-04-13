@@ -19,11 +19,11 @@ public class InventoryProvider extends ContentProvider {
      */
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
     /**
-     * URI matcher code for the content URI for the pets table
+     * URI matcher code for the content URI for the products table
      */
     private static final int PRODUCTS = 100;
     /**
-     * URI matcher code for the content URI for a single pet in the pets table
+     * URI matcher code for the content URI for a single product in the products table
      */
     private static final int PRODUCT_ID = 101;
     /**
@@ -53,7 +53,7 @@ public class InventoryProvider extends ContentProvider {
      */
     @Override
     public boolean onCreate() {
-        // InventoryDbHelper object that gains access to the pets database.
+        // InventoryDbHelper object that gains access to the products database.
         mDbHelper = new InventoryDbHelper((getContext()));
         return true;
     }
@@ -74,15 +74,15 @@ public class InventoryProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                // For the PRODUCTS code, query the pets table directly with the given
+                // For the PRODUCTS code, query the products table directly with the given
                 // projection, selection, selection arguments, and sort order. The cursor
-                // could contain multiple rows of the pets table.
+                // could contain multiple rows of the products table.
                 cursor = database.query(InventoryContract.ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case PRODUCT_ID:
                 // For the PRODUCT_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.example.android.pets/pets/3",
+                // For an example URI such as "content://com.example.android.products/products/3",
                 // the selection will be "_id=?" and the selection argument will be a
                 // String array containing the actual ID of 3 in this case.
                 //
@@ -92,7 +92,7 @@ public class InventoryProvider extends ContentProvider {
                 selection = InventoryContract.ProductEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                // This will perform a query on the pets table where the _id equals 3 to return a
+                // This will perform a query on the products table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
                 cursor = database.query(InventoryContract.ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -117,7 +117,7 @@ public class InventoryProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                return insertPet(uri, contentValues);
+                return insertProduct(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -127,32 +127,22 @@ public class InventoryProvider extends ContentProvider {
      * Insert a product into the database with the given content values. Return the new content URI
      * for that specific row in the database.
      */
-    private Uri insertPet(Uri uri, ContentValues values) {
+    private Uri insertProduct(Uri uri, ContentValues values) {
         // Check that the name is not null
         String name = values.getAsString(InventoryContract.ProductEntry.COLUMN_NAME);
-        if (name == null) {
-            throw new IllegalArgumentException("Product requires a name");
-        }
-        // Check that the supplier's name is not null
-        String suppName = values.getAsString(InventoryContract.ProductEntry.COLUMN_NAME);
-        if (suppName == null) {
-            throw new IllegalArgumentException("Product requires a supplier's name");
-        }
-        // Check that the supplier's phone is not null
-        String suppPhone = values.getAsString(InventoryContract.ProductEntry.COLUMN_NAME);
-        if (suppPhone == null) {
-            throw new IllegalArgumentException("Product requires a supplier's phone");
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Book requires valid name");
         }
 
         // If the price is provided, check that it's greater than or equal to 0 USD
         Integer price = values.getAsInteger(InventoryContract.ProductEntry.COLUMN_PRICE);
         if (price != null && price < 0) {
-            throw new IllegalArgumentException("Product requires valid price");
+            throw new IllegalArgumentException("Book requires valid price");
         }
         // If the quantity is provided, check that it's greater than or equal to 0
         Integer quantity = values.getAsInteger(InventoryContract.ProductEntry.COLUMN_QUANTITY);
-        if (quantity != null && price < 0) {
-            throw new IllegalArgumentException("Product requires valid quantity");
+        if (quantity != null && quantity < 0) {
+            throw new IllegalArgumentException("Book requires valid quantity");
         }
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -165,7 +155,7 @@ public class InventoryProvider extends ContentProvider {
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
+        // Notify all listeners that the data has changed for the product content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
@@ -209,25 +199,6 @@ public class InventoryProvider extends ContentProvider {
                 throw new IllegalArgumentException("Product requires a name");
             }
         }
-
-        // If the {@link ProductEntry#COLUMN_SUPP_NAME} key is present,
-        // check that the name value is not null.
-        if (values.containsKey(InventoryContract.ProductEntry.COLUMN_SUPP_NAME)) {
-            String suppName = values.getAsString(InventoryContract.ProductEntry.COLUMN_SUPP_NAME);
-            if (suppName == null) {
-                throw new IllegalArgumentException("Product requires a supplier's name");
-            }
-        }
-
-        // If the {@link ProductEntry#COLUMN_SUPP_PHONE} key is present,
-        // check that the name value is not null.
-        if (values.containsKey(InventoryContract.ProductEntry.COLUMN_SUPP_PHONE)) {
-            String suppPhone = values.getAsString(InventoryContract.ProductEntry.COLUMN_SUPP_PHONE);
-            if (suppPhone == null) {
-                throw new IllegalArgumentException("Product requires a supplier's phone");
-            }
-        }
-
 
         // If the {@link ProductEntry#COLUMN_PRICE} key is present,
         // check that the weight value is valid.
@@ -285,13 +256,13 @@ public class InventoryProvider extends ContentProvider {
                 // Delete all rows that match the selection and selection args
                 rowsDeleted = database.delete(InventoryContract.ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-                case PRODUCT_ID:
+            case PRODUCT_ID:
                 // Delete a single row given by the ID in the URI
                 selection = InventoryContract.ProductEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                    rowsDeleted = database.delete(InventoryContract.ProductEntry.TABLE_NAME, selection, selectionArgs);
-                                   break;
-                    default:
+                rowsDeleted = database.delete(InventoryContract.ProductEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
 
@@ -320,4 +291,4 @@ public class InventoryProvider extends ContentProvider {
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
     }
-    }
+}

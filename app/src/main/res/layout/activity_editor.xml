@@ -25,13 +25,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="vertical"
-            android:paddingLeft="4dp">
+            android:paddingLeft="@dimen/padding_small">
 
             <!-- Product name field -->
             <EditText
                 android:id="@+id/edit_name"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_name"
+                android:inputType="textCapWords" />
+
+            <!-- Product author field -->
+            <EditText
+                android:id="@+id/edit_author"
+                style="@style/EditorFieldStyle"
+                android:hint="@string/hint_author"
                 android:inputType="textCapWords" />
 
             <!-- Supplier name field -->
@@ -46,7 +53,7 @@
                 android:id="@+id/edit_supplier_phone"
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_supplier_phone"
-                android:inputType="textCapWords" />
+                android:inputType="number" />
         </LinearLayout>
     </LinearLayout>
 
@@ -67,7 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:paddingLeft="4dp">
+            android:paddingLeft="@dimen/padding_small">
 
             <!-- Price field -->
             <EditText
@@ -102,7 +109,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:paddingLeft="4dp">
+            android:paddingLeft="@dimen/padding_small">
 
             <!-- Price field -->
             <EditText
