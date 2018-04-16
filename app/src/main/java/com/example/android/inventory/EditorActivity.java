@@ -148,6 +148,23 @@ public class EditorActivity extends AppCompatActivity implements
         mSuppPhoneEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
+
+        /**
+         * Intent to dial supplier's contact number
+         */
+
+        Button contactSupplier = (Button) findViewById(R.id.contact_supplier);
+        contactSupplier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String phoneNumber = mSuppPhoneEditText.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     /**
@@ -170,6 +187,7 @@ public class EditorActivity extends AppCompatActivity implements
                 TextUtils.isEmpty(suppPhoneString)) {
             // Since no fields were modified, we can return early without creating a new product.
             // No need to create ContentValues and no need to do any ContentProvider operations.
+            finish();
             return;
         }
 
@@ -211,6 +229,7 @@ public class EditorActivity extends AppCompatActivity implements
                 } else {
                     // Otherwise, the insertion was successful and we can display a toast with the row ID.
                     Toast.makeText(this, getString(R.string.editor_insert_product_successful), Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             } catch (IllegalArgumentException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -231,6 +250,7 @@ public class EditorActivity extends AppCompatActivity implements
                 } else {
                     // Otherwise, the update was successful and we can display a toast.
                     Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             } catch (IllegalArgumentException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -269,8 +289,6 @@ public class EditorActivity extends AppCompatActivity implements
             case R.id.action_save:
                 // Save product to database
                 saveProduct();
-                // Exit activity
-                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:

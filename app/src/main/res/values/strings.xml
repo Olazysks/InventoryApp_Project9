@@ -111,4 +111,5 @@
     <!-- Sighn for add and deduct buttons -->
     <string name="add_1">+</string>
     <string name="deduct_1">-</string>
+    <string name="contact_supplier">Contact supplier</string>
 </resources>
