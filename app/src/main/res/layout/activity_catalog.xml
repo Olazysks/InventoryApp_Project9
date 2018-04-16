@@ -46,7 +46,7 @@
             android:paddingTop="@dimen/padding_medium"
             android:text="@string/empty_view_subtitle_text"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#A2AAB0" />
+            android:textColor="@color/emptySubtitleColor" />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton

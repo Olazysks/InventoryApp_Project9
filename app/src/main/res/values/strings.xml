@@ -10,13 +10,13 @@
     <string name="action_delete_all_entries">Delete All Books</string>
 
     <!-- Title text for the empty view, which describes the empty dog house image -->
-    <string name="empty_view_title_text">It\'s a bit lonely here...</string>
+    <string name="empty_view_title_text">It\'s a bit lonely here…</string>
 
     <!-- Subtitle text for the empty view that prompts the user to add a product -->
     <string name="empty_view_subtitle_text">Get started by adding a book</string>
 
     <!-- Title for the activity to add a new product -->
-    <string name="editor_activity_title_new_product">Add a Book</string>
+    <string name="editor_activity_title_new_product">Add Book</string>
 
     <!-- Title for the activity to edit an existing product -->
     <string name="editor_activity_title_edit_product">Edit Book</string>

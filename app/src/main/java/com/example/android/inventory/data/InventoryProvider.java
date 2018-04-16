@@ -54,7 +54,7 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         // InventoryDbHelper object that gains access to the products database.
-        mDbHelper = new InventoryDbHelper((getContext()));
+        mDbHelper = new InventoryDbHelper(getContext());
         return true;
     }
 
@@ -195,7 +195,7 @@ public class InventoryProvider extends ContentProvider {
         // check that the name value is not null.
         if (values.containsKey(InventoryContract.ProductEntry.COLUMN_NAME)) {
             String name = values.getAsString(InventoryContract.ProductEntry.COLUMN_NAME);
-            if (name == null) {
+            if (name == null || name.isEmpty()) {
                 throw new IllegalArgumentException("Product requires a name");
             }
         }

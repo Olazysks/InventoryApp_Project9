@@ -35,7 +35,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.inventory.data.InventoryContract;
@@ -50,7 +49,7 @@ public class EditorActivity extends AppCompatActivity implements
     /**
      * Identifier for the product data loader
      */
-    private static final int EXISTING_PRODUCT_LOADER = 0;
+    private static final int EXISTING_BOOK_LOADER = 0;
 
     /**
      * Content URI for the existing product (null if it's a new product)
@@ -117,19 +116,19 @@ public class EditorActivity extends AppCompatActivity implements
         // If the intent DOES NOT contain a product content URI, then we know that we are
         // creating a new Product.
         if (mCurrentProductUri == null) {
-            // This is a new product, so change the app bar to say "Add a product"
+            // This is a new product, so change the app bar to say "Add Book"
             setTitle(getString(R.string.editor_activity_title_new_product));
 
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
             // (It doesn't make sense to delete a product that hasn't been created yet.)
             invalidateOptionsMenu();
         } else {
-            // Otherwise this is an existing product, so change app bar to say "Edit Product"
+            // Otherwise this is an existing product, so change app bar to say "Edit Book"
             setTitle(getString(R.string.editor_activity_title_edit_product));
 
             // Initialize a loader to read the product data from the database
             // and display the current values in the editor
-            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
+            getLoaderManager().initLoader(EXISTING_BOOK_LOADER, null, this);
         }
 
         // Find all relevant views that we will need to read user input from
@@ -221,16 +220,20 @@ public class EditorActivity extends AppCompatActivity implements
             // and pass in the new ContentValues. Pass in null for the selection and selection args
             // because mCurrentProductUri will already identify the correct row in the database that
             // we want to modify.
-            int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
+            try {
+                int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
 
-            // Show a toast message depending on whether or not the update was successful.
-            if (rowsAffected == 0) {
-                // If no rows were affected, then there was an error with the update.
-                Toast.makeText(this, getString(R.string.editor_update_product_failed),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
+                // Show a toast message depending on whether or not the update was successful.
+                if (rowsAffected == 0) {
+                    // If no rows were affected, then there was an error with the update.
+                    Toast.makeText(this, getString(R.string.editor_update_product_failed),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Otherwise, the update was successful and we can display a toast.
+                    Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
+                }
+            } catch (IllegalArgumentException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -392,15 +395,12 @@ public class EditorActivity extends AppCompatActivity implements
                         return;
                     }
                     mQuantityEditText.setText(Integer.toString(quantity - 1));
-                    int idColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry._ID);
-                    Long id = cursor.getLong(idColumnIndex);
-                    Uri currentProductUri = ContentUris.withAppendedId(InventoryContract.ProductEntry.CONTENT_URI, id);
 
                     // Create a ContentValues object where column names are the keys,
                     // and product attributes from the editor are the values.
                     ContentValues values = new ContentValues();
                     values.put(InventoryContract.ProductEntry.COLUMN_QUANTITY, quantity - 1);
-                    getContentResolver().update(currentProductUri, values, null, null);
+                    getContentResolver().update(mCurrentProductUri, values, null, null);
                 }
             });
 
@@ -410,15 +410,12 @@ public class EditorActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     mQuantityEditText.setText(Integer.toString(quantity + 1));
-                    int idColumnIndex = cursor.getColumnIndex(InventoryContract.ProductEntry._ID);
-                    Long id = cursor.getLong(idColumnIndex);
-                    Uri currentProductUri = ContentUris.withAppendedId(InventoryContract.ProductEntry.CONTENT_URI, id);
 
                     // Create a ContentValues object where column names are the keys,
                     // and product attributes from the editor are the values.
                     ContentValues values = new ContentValues();
                     values.put(InventoryContract.ProductEntry.COLUMN_QUANTITY, quantity + 1);
-                    getContentResolver().update(currentProductUri, values, null, null);
+                    getContentResolver().update(mCurrentProductUri, values, null, null);
                 }
             });
         }

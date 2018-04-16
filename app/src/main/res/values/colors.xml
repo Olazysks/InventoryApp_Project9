@@ -17,4 +17,13 @@
 
     <!-- Buttons color -->
     <color name="buttonColor">#EEEEEE</color>
+
+    <!-- Empty subtitle text color -->
+    <color name="emptySubtitleColor">#A2AAB0</color>
+
+    <!-- Text colors for the main and additional information in the catalog -->
+    <color name="mainInfoColor">#2B3D4D</color>
+    <color name="additionalInfoColor">#AEB6BD</color>
+
+
 </resources>

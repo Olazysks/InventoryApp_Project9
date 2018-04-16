@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
     android:orientation="horizontal"
     android:padding="@dimen/activity_margin">
 
@@ -18,7 +19,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#2B3D4D" />
+            android:textColor="@color/mainInfoColor" />
 
         <TextView
             android:id="@+id/author"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD" />
+            android:textColor="@color/additionalInfoColor" />
     </LinearLayout>
 
     <TextView
@@ -37,7 +38,7 @@
         android:layout_weight="1"
         android:fontFamily="sans-serif-medium"
         android:textAppearance="?android:textAppearanceSmall"
-        android:textColor="#2B3D4D" />
+        android:textColor="@color/mainInfoColor" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -53,7 +54,7 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="right"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#2B3D4D" />
+            android:textColor="@color/mainInfoColor" />
 
         <TextView
             android:id="@+id/books"
@@ -62,7 +63,7 @@
             android:fontFamily="sans-serif"
             android:text="books"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD" />
+            android:textColor="@color/additionalInfoColor" />
 
     </LinearLayout>
 
